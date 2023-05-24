@@ -13,6 +13,8 @@ from selenium.webdriver.common.by import By
 from news_locators import NewsLocators
 from models import News
 from config import OUTPUT
+
+
 class FreshNews:
     """
     A class to scrape fresh news from a website.
@@ -21,6 +23,7 @@ class FreshNews:
         sections (list): The list of sections to filter news articles.
         months (int): The number of months to retrieve news articles from.
     """
+    
     def __init__(self, search_phrase, months, sections=None):
         self.browser = Selenium()
         self.base_url = 'https://www.nytimes.com/'
@@ -32,6 +35,7 @@ class FreshNews:
         self.files = Files()
         self.http = HTTP()
         self.lib = Archive()
+        
     def setup(self):
         """
         Set up directories for storing output.
@@ -46,12 +50,14 @@ class FreshNews:
             elif os.path.isdir(file_path):
                 shutil.rmtree(file_path)
         os.mkdir(f'{OUTPUT}/imgs')
+        
     def open_site(self):
         """
         Open the news website.
         """
         print('Accessing the news website.')
         self.browser.open_headless_chrome_browser(self.base_url)
+        
     def search_text(self):
         """
         Perform a search with the specified search phrase.
@@ -60,6 +66,7 @@ class FreshNews:
         self.browser.click_element_if_visible(self.locators.search_button)
         self.browser.press_keys(self.locators.search_input, self.search_phrase)
         self.browser.press_keys(self.locators.search_input, 'RETURN')
+        
     def select_section(self):
         """
         Select the specified sections to filter news articles.
@@ -73,6 +80,7 @@ class FreshNews:
                 except Exception as e:
                     print(f'Failed to select section {section} with error: {str(e)}')
             self.browser.click_element_if_visible(self.locators.section_button)
+            
     def select_newest(self):
         """
         Select the filter for newest news.
@@ -80,6 +88,7 @@ class FreshNews:
         print('Selecting filter for newest news.')
         self.browser.wait_until_page_contains_element(self.locators.sort_button)
         self.browser.select_from_list_by_value(self.locators.sort_button, 'newest')
+        
     def get_total_results_count(self):
         """
         Get the total number of results for the search.
@@ -93,6 +102,7 @@ class FreshNews:
             total_value_string = '0'
         total_value_int = int(total_value_string.replace(' ', '').replace(',', ''))
         return total_value_int
+    
     def get_date(self):
         """
         Get the date range for the search.
@@ -104,6 +114,7 @@ class FreshNews:
         to_date = datetime.datetime.now()
         from_date = to_date - relativedelta(months=self.months)
         return to_date.strftime('%m/%d/%Y'), from_date.strftime('%m/%d/%Y')
+    
     def set_date_range(self):
         """
         Set the date range for the search.
@@ -115,6 +126,7 @@ class FreshNews:
         self.browser.input_text_when_element_is_visible(self.locators.start_date, from_date)
         self.browser.input_text_when_element_is_visible(self.locators.end_date, to_date)
         self.browser.press_keys(self.locators.end_date, 'RETURN')
+        
     def read_news(self, news_index):
         """
         Read and store the details of a news article.
@@ -150,6 +162,7 @@ class FreshNews:
             filename=file_name
         )
         self.news_list.append(news_record)
+        
     def start(self):
         """
         Start the scraping process.
@@ -173,6 +186,7 @@ class FreshNews:
                     pass
                 self.browser.click_element(self.locators.show_more)
             self.read_news(index)
+            
     def end(self):
         """
         Finish the scraping process and store the collected data.
@@ -186,3 +200,4 @@ class FreshNews:
         self.files.close_workbook()
         self.lib.archive_folder_with_zip(f'{OUTPUT}/imgs', f'{OUTPUT}/images.zip', recursive=True)
         print('Collected data has been stored in output.')
+        
