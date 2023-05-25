@@ -211,6 +211,7 @@ class FreshNews:
                     self.browser.click_element_when_visible(self.locators.pop_up_close_button)
                 except AssertionError:
                     pass
+                self.browser.scroll_element_into_view(self.locators.show_more)
                 self.browser.click_element(self.locators.show_more)
             self.read_news(index)
 
