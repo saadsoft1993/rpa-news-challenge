@@ -189,6 +189,13 @@ class FreshNews:
         )
         self.news_list.append(news_record)
 
+    def handle_pop_up(self):
+        try:
+            self.browser.wait_until_page_contains_element(self.locators.pop_up_close_button)
+            self.browser.click_element_when_visible(self.locators.pop_up_close_button)
+        except AssertionError:
+            pass
+
     def start(self):
         """
         Start the scraping process.
@@ -205,12 +212,9 @@ class FreshNews:
         if not total_results:
             total_results = 0
         print(f'Total number of results found: {total_results}')
+        self.handle_pop_up()
         for index in range(1, total_results + 1):
             if index % 10 == 0:
-                try:
-                    self.browser.click_element_when_visible(self.locators.pop_up_close_button)
-                except AssertionError:
-                    pass
                 self.browser.scroll_element_into_view(self.locators.show_more)
                 self.browser.click_element(self.locators.show_more)
             self.read_news(index)
@@ -229,3 +233,4 @@ class FreshNews:
         self.files.close_workbook()
         self.lib.archive_folder_with_zip(f'{OUTPUT}/imgs', f'{OUTPUT}/images.zip', recursive=True)
         print('Collected data has been stored in output.')
+        
