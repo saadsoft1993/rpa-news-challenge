@@ -23,4 +23,4 @@ class NewsLocators:
 
     show_more = '//button[contains(text(),"Show More")]'
 
-    pop_up_close_button = '//button[@data-testid="expanded-dock-btn-selector"]'
+    pop_up_close_button = '//button[contains(text(),"Accept")]'
