@@ -10,6 +10,7 @@ from RPA.HTTP import HTTP
 from RPA.Archive import Archive
 from SeleniumLibrary.errors import ElementNotFound
 from dateutil.relativedelta import relativedelta
+from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 
 from news_locators import NewsLocators
@@ -165,11 +166,11 @@ class FreshNews:
         date = search_result.find_element(By.XPATH, self.locators.news_date).text
         try:
             description = search_result.find_element(By.XPATH, self.locators.news_description).text
-        except ElementNotFound:
+        except NoSuchElementException:
             description = ''
         try:
             image_url = search_result.find_element(By.XPATH, self.locators.news_image).get_attribute('src')
-        except ElementNotFound:
+        except NoSuchElementException:
             image_url = ''
         if image_url:
             file_name = f'image{news_index}'
